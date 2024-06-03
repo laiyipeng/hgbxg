@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+	质保书查询
+</title><meta name="format-detection" content="telephone=no,email=no,date=no,address=no" /><meta http-equiv="Content-type" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" /><link rel="stylesheet" href="css/pure.css" /><link rel="stylesheet" href="css/main.css" /><link rel="stylesheet" href="css/aui/aui.min.css" />
+    <script src="script/zepto.min.js"></script>
+    <script src="script/screen.js"></script>
+    <!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=14R0fA1gjtorPt4g6bsemRPhxVdnGED0"></script> -->
+    <script type="text/javascript" src="script/linq.js"></script>
+	<script type="text/javascript" src="script/ajax.js"></script>
+    <script type="text/javascript" src="config.js"></script>
+    <style>
+    .tab-header {
+        background-color: #EEE;
+        text-align: center;
+        font-size: 16px;
+        height: 80px;
+        line-height: 40px;
+        width: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 2;
+    }
+    .tab-btn {
+        border-bottom-width: 5px;
+        border-bottom-color: transparent;
+        border-bottom-style: solid;
+        height: 36px;
+    }
+    .tab-btn.tab-active {
+        border-bottom-color: #2882E0;
+    }
+    .hidden {
+        display: none !important;
+    }
+    .aui-input-addon {
+        min-width: 8rem;
+    }
+    .aui-input-2-1 {
+        width: 10rem !important;
+    }
+    .tab-table {
+        margin-top: 80px;
+    }
+    .aui-toast {
+        background: rgba(0, 0, 0, 0.6);
+        text-align: center;
+        border-radius: 5px;
+        color: #ffffff;
+        position: fixed;
+        z-index: 3;
+        top: 180px;
+        left: 50%;
+        width: 7.5em;
+        min-height: 7.5em;
+        margin-left: -3.75em;
+    }
+    .aui-toast .aui-toast-loading {
+        background-color: #fff;
+        border-radius: 100%;
+        margin: 15px 0;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        border: 2px solid #fff;
+        border-bottom-color: transparent;
+        height: 45px;
+        width: 45px;
+        background: transparent !important;
+        display: inline-block;
+        -webkit-animation: rotate 1s 0s linear infinite;
+        animation: rotate 1s 0s linear infinite;
+    }
+    .aui-toast-content {
+        margin: 0 0 15px;
+    }
+    </style>
+</head>
+<body>
+<div class="aui-toast" id="loading">
+    <div class="aui-toast-loading"></div>
+    <div class="aui-toast-content">加载中</div>
+</div>
+<div class="bill hidden">
+    <div class="pure-g tab-header">
+            <div class="pure-u-1-3 tab-btn">
+                基本信息
+            </div>
+            <div class="pure-u-1-3 tab-btn">
+                化学成分
+            </div>
+            <div class="pure-u-1-3 tab-btn">
+                力学性能
+            </div>
+            <div class="pure-u-1-3 tab-btn">
+                工艺性能
+            </div>
+            <div class="pure-u-1-3 tab-btn">
+                高倍组织
+            </div>
+            <div class="pure-u-1-3 tab-btn">
+                无损检验
+            </div>
+        </div>
+    
+    <div class="tab-table hidden">
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">生产许可证号</label>
+            <input type="text" class="search aui-input" value="TS2710792-2025" placeholder="生产许可证号" readonly="readonly"/>
+        </div>
+        <div  class="aui-input-row aui-success row">
+            <label class="aui-input-addon">质保书编号</label>
+            <input type="text" class="search aui-input" id="billcode" placeholder="质保书编号" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">用户</label>
+            <input type="text" class="search aui-input" id="cvname" placeholder="用户" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">产品名称</label>
+            <input type="text" class="search aui-input" value="不锈钢无缝钢管" placeholder="产品名称" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">生产厂家</label>
+            <input type="text" class="search aui-input" value="青山钢管有限公司" placeholder="生产厂家" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row hidden">
+            <label class="aui-input-addon">Name Of Product</label>
+            <input type="text" class="search aui-input" id="" placeholder="Name Of Product" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">合同号</label>
+            <input type="text" class="search aui-input" id="refkeyfield" placeholder="合同号" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">生产标准</label>
+            <input type="text" class="search aui-input" id="clbzname" placeholder="生产标准" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">交货状态</label>
+            <input type="text" class="search aui-input" value="固溶、酸洗" placeholder="交货状态" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">生产批号</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="batchnum2" placeholder="生产批号" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="batchnum2-2" placeholder="生产批号" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">钢种</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="goodsname" placeholder="钢种" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="goodsname-2" placeholder="钢种" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">炉号</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="batchnum" placeholder="炉号" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="batchnum-2" placeholder="炉号" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">规格</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="subspecex" placeholder="规格" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="subspecex-2" placeholder="规格" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">支数</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="bqty2" placeholder="支数" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="bqty2-2" placeholder="支数" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">重量</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="qty" placeholder="重量" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="qty-2" placeholder="重量" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">尺寸公差</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="" placeholder="尺寸公差" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="" placeholder="尺寸公差" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">表面质量</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem2" placeholder="表面质量" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem2-2" placeholder="表面质量" readonly="readonly"/>
+        </div>  
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">查询次数</label>
+            <input type="text" class="search aui-input" id="viewtimes" placeholder="查询次数" readonly="readonly"/>
+        </div>  
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">最后查询时间</label>
+            <input type="text" class="search aui-input" id="lastviewdt" placeholder="最后查询时间" readonly="readonly"/>
+        </div>  
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">最后查询地点</label>
+            <input type="text" class="search aui-input" id="lastviewaddress" placeholder="最后查询地点" readonly="readonly"/>
+        </div>      
+    </div>
+    
+    <div class="tab-table hidden">
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">C</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d01" placeholder="C" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d01-2" placeholder="C" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Si</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d03" placeholder="Si" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d03-2" placeholder="Si" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Mn</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d05" placeholder="Mn" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d05-2" placeholder="Mn" readonly="readonly"/>
+        </div>  
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">P</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d07" placeholder="P" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d07-2" placeholder="P" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">S</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d09" placeholder="S" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d09-2" placeholder="S" readonly="readonly"/>
+        </div>
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Cr</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d13" placeholder="Cr" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d13-2" placeholder="Cr" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Ni</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d11" placeholder="Ni" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d11-2" placeholder="Ni" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Mo</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d15" placeholder="Mo" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d15-2" placeholder="Mo" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Ti</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d29" placeholder="Ti" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d29-2" placeholder="Ti" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">N</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d17" placeholder="N" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d17-2" placeholder="N" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Cu</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d19" placeholder="Cu" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d19-2" placeholder="Cu" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">Nb</label>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d31" placeholder="Nb" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1 children" id="d31-2" placeholder="Nb" readonly="readonly"/>
+        </div> 
+    </div>
+    
+    <div class="tab-table hidden">
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">屈服强度Mpa(Rp0.2)</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem4" placeholder="屈服强度Mpa" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem4-2" placeholder="屈服强度Mpa" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">屈服强度Mpa(Rp1.0)</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem5" placeholder="屈服强度Mpa" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem5-2" placeholder="屈服强度Mpa" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">抗拉强度(RM)</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem3" placeholder="抗拉强度" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem3-2" placeholder="抗拉强度" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">伸长率(A)</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem6" placeholder="伸长率" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem6-2" placeholder="伸长率" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">硬度HRB</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem7" placeholder="硬度HRB" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem7-2" placeholder="硬度HRB" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">硬度HRC</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem8" placeholder="硬度HRC" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem8-2" placeholder="硬度HRC" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">冲击能量KV2</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem9" placeholder="冲击能量" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem9-2" placeholder="冲击能量" readonly="readonly"/>
+        </div> 
+    </div>
+    
+    <div class="tab-table hidden">
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">扩口</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem10" placeholder="扩口" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem10-2" placeholder="扩口" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">压扁</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem11" placeholder="压扁" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem11-2" placeholder="压扁" readonly="readonly"/>
+        </div> 
+    </div>
+    
+    <div class="tab-table hidden">
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">晶间腐蚀</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem13" placeholder="晶间腐蚀" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem13-2" placeholder="晶间腐蚀" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">晶粒度</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem12" placeholder="晶粒度" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem12-2" placeholder="晶粒度" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">α-相</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem14" placeholder="α-相" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem14-2" placeholder="α-相" readonly="readonly"/>
+        </div> 
+    </div>
+    
+    <div class="tab-table hidden">
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">超声波</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem15" placeholder="超声波" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem15-2" placeholder="超声波" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">涡流</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem16" placeholder="涡流" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem16-2" placeholder="涡流" readonly="readonly"/>
+        </div> 
+        <div class="aui-input-row aui-success row">
+            <label class="aui-input-addon">水压</label>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem17" placeholder="水压" readonly="readonly"/>
+            <input type="text" class="search aui-input aui-input-2-1" id="selfitem17-2" placeholder="水压" readonly="readonly"/>
+        </div>
+    </div>
+</div>
+    <div id="allmap"></div>
+    <script>
+        // 老代码 start
+        // var map = new BMap.Map("allmap");
+        // var geolocation = new BMap.Geolocation();
+        // var myGeo = new BMap.Geocoder();
+        // geolocation.getCurrentPosition(function(r) {
+        //     if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+        //         var mk = new BMap.Marker(r.point);
+        //         map.addOverlay(mk);
+        //         map.panTo(r.point);
+        //         myGeo.getLocation(new BMap.Point(r.point.lng, r.point.lat), function(result) {
+        //             if (result) {
+        //                 var address = result.address;
+        //                 var code = getUrlParam("code").trim().split(" ")[0];
+        //                 ajax({
+        //                     url: config.ServerAddress + "/zbsModule/query",
+        //                     crossDomain: true,
+        //                     type: "Get",
+        //                     data: {
+        //                         dbkey: config.DbKey,
+        //                         billid: code,
+        //                         address: address
+        //                     },
+        //                     success: function (ret) {
+        //                         var s = JSON.parse(dealAjaxRet(ret));
+        //                         if (s.errorcode == 3) {
+        //                             alert("查询失败");
+        //                             $('.bill').removeClass('hidden');
+        //                             $("#loading").addClass("hidden");
+        //                             return;
+        //                         }
+        //                         var list = s.data[0];
+        //                         if (list.length == 0) {
+        //                             alert("查询失败");
+        //                             $('.bill').removeClass('hidden');
+        //                             $("#loading").addClass("hidden");
+        //                         } else {
+        //                             FillBIill(list);
+        //                         }
+        //                     },
+        //                     error:function() {
+        //                         alert("查询失败");
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     } else {
+        //         alert('failed' + this.getStatus());
+        //     }
+        // }, { enableHighAccuracy: true });
+        //  老代码 end
+
+        var address = "瞎写的地址";
+        var code = getUrlParam("code");
+        if (code) {
+            code = code.trim().split(" ")[0];
+        } 
+
+        ajax({
+            // url: config.ServerAddress + "/zbsModule/query", # origin
+            url: config.ServerAddress + "/data.json",
+            crossDomain: true,
+            type: "Get",
+            data: {
+                dbkey: config.DbKey,
+                billid: code,
+                address: address
+            },
+            success: function (ret) {
+                var s = JSON.parse(dealAjaxRet(ret));
+                if (s.errorcode == 3) {
+                    alert("查询失败");
+                    $('.bill').removeClass('hidden');
+                    $("#loading").addClass("hidden");
+                    return;
+                }
+                var list = s.data[0];
+                if (list.length == 0) {
+                    alert("查询失败");
+                    $('.bill').removeClass('hidden');
+                    $("#loading").addClass("hidden");
+                } else {
+                    FillBIill(list);
+                }
+            },
+            error:function() {
+                alert("查询失败");
+            }
+        });
+        
+        //获取url中的参数
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+
+        function FillBIill(items) {
+            var parentitems = Enumerable.From(items).Where(function(p) {
+                return p.pid == null;
+            }).ToArray();
+            for (var i = 0; i < parentitems.length; i++) {
+                if (i == 2)
+                    break;
+                var tail = "";
+                if (i == 1)
+                    tail = "-2";
+                for (var datafield in parentitems[i]) {
+                    var $obj = $("#" + datafield + tail);
+                    if ($obj.length > 0 && $obj.hasClass("children")==false) {
+                        $obj.val(parentitems[i][datafield]);
+                    }
+                }
+                var childrenItem = Enumerable.From(items).FirstOrDefault(null, function(p) {
+                    return p.pid == parentitems[i].id;
+                });
+                if (childrenItem != null) {
+                    for (var datafield in childrenItem) {
+                        var $obj = $("#" + datafield + tail);
+                        if ($obj.length > 0 && $obj.hasClass("children")) {
+                            $obj.val(childrenItem[datafield]);
+                        }
+                    }
+                }
+            }
+            
+            $('.bill').removeClass('hidden');
+            $("#loading").addClass("hidden");
+        }
+        function _scrollToTop() {
+            document.getElementsByTagName('body')[0].scrollTop = 0;
+        }
+        createTabTable({
+            tabBtns: $('.tab-btn'),
+            tabTables: $('.tab-table'),
+            defaultIndex: 0
+        });
+
+        function createTabTable(obj) {
+            var btns = obj.tabBtns;
+            var tables = obj.tabTables;
+
+            function onTap() {
+                btns.removeClass('tab-active');
+                $(this).addClass('tab-active');
+
+                var idx = btns.indexOf(this);
+                tables.addClass('hidden');
+                tables.eq(idx).removeClass('hidden');
+                _scrollToTop();
+            }
+
+            obj.tabBtns.on('click', onTap);
+            if (typeof obj.defaultIndex == 'undefined') {
+                obj.defaultIndex = 0;
+            }
+            obj.tabBtns.eq(0).trigger('click');
+        }
+    </script>
+</body>
+</html>
