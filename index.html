@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head><title>
 	质保书查询
 </title><meta name="format-detection" content="telephone=no,email=no,date=no,address=no" /><meta http-equiv="Content-type" name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" /><link rel="stylesheet" href="css/pure.css" /><link rel="stylesheet" href="css/main.css" /><link rel="stylesheet" href="css/aui/aui.min.css" />
@@ -399,6 +399,7 @@
 
         var address = "瞎写的地址";
         var code = getUrlParam("code");
+        var num = getUrlParam("num");
         if (code) {
             code = code.trim().split(" ")[0];
         } 
@@ -411,7 +412,8 @@
             data: {
                 dbkey: config.DbKey,
                 billid: code,
-                address: address
+                address: address,
+                num: num
             },
             success: function (ret) {
                 var s = JSON.parse(dealAjaxRet(ret));
@@ -427,7 +429,7 @@
                     $('.bill').removeClass('hidden');
                     $("#loading").addClass("hidden");
                 } else {
-                    FillBIill(list);
+                    FillBIill(list, num);
                 }
             },
             error:function() {
@@ -442,7 +444,7 @@
             if (r != null) return unescape(r[2]); return null; //返回参数值
         }
 
-        function FillBIill(items) {
+        function FillBIill(items, num) {
             var parentitems = Enumerable.From(items).Where(function(p) {
                 return p.pid == null;
             }).ToArray();
@@ -455,7 +457,15 @@
                 for (var datafield in parentitems[i]) {
                     var $obj = $("#" + datafield + tail);
                     if ($obj.length > 0 && $obj.hasClass("children")==false) {
-                        $obj.val(parentitems[i][datafield]);
+                        console.log(datafield, parentitems[i][datafield]);
+                        if (datafield == 'billcode' || datafield == 'batchnum2') {
+                            $obj.val(incrementStringNumber(parentitems[i][datafield], num));
+                        }
+                        else if (datafield == 'qty') {
+                            $obj.val(parentitems[i][datafield] + Math.floor(Math.random() * 16));
+                        }
+                        else
+                            $obj.val(parentitems[i][datafield]);
                     }
                 }
                 var childrenItem = Enumerable.From(items).FirstOrDefault(null, function(p) {
@@ -502,6 +512,22 @@
                 obj.defaultIndex = 0;
             }
             obj.tabBtns.eq(0).trigger('click');
+        }
+
+        function incrementStringNumber(originalString, num) {
+            // 提取最后两位数字部分
+            let numberPart = originalString.slice(-2);
+
+            // 将数字部分转换为整数并加1
+            let incrementedNumber = parseInt(numberPart) + parseInt(num);
+
+            // 将增量后的数字部分转换回字符串并保持原来的长度（2位）
+            let incrementedNumberString = incrementedNumber.toString().padStart(2, '0');
+
+            // 用增量后的数字部分替换原字符串中的最后两位
+            let newString = originalString.slice(0, -2) + incrementedNumberString;
+
+            return newString;
         }
     </script>
 </body>
