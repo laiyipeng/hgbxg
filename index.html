@@ -462,7 +462,7 @@
                             $obj.val(incrementStringNumber(parentitems[i][datafield], num));
                         }
                         else if (datafield == 'qty') {
-                            $obj.val(parentitems[i][datafield] + Math.floor(Math.random() * 16));
+                            $obj.val(parentitems[i][datafield] + num % 7);
                         }
                         else
                             $obj.val(parentitems[i][datafield]);
