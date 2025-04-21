@@ -23,7 +23,7 @@ def generate_qr_code(url, output_file):
 
 # 示例使用
 for i in range(23):
-    url = f'http://121.40.166.187:9000/?num={i}'
+    url = f'http://121.41.93.145:9000/?num={i}'
     print(url)
 
     output_file = f"code/编号{i}.png"
